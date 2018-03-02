@@ -1,0 +1,117 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "cc.colorcat.client"
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true // 启用矢量图形支持
+
+        // 友盟 App key，定义位于 /src/main/AndroidManifest.xml <meta-data android:name="UMENG_APPKEY".../>
+        manifestPlaceholders = [UMENG_APPKEY_VALUE: "0123456789101112131415"]
+    }
+
+    def PREFIX = "kmvp_" // app 名称前缀，用于渠道统计和打包
+    flavorDimensions('default') // flavorDimensions "default"
+    // 多渠道打包，友盟统计渠道标签，定义位于 /src/main/AndroidManifest.xml <meta-data android:name="UMENG_CHANNEL".../>
+    productFlavors {
+        android_dev {
+            dimension "default"
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: PREFIX + "android_dev"]
+        }
+
+        official {
+            dimension "default"
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: PREFIX + "android_official"]
+        }
+
+        xiaomi {
+            dimension "default"
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: PREFIX + "android_xiaomi"]
+        }
+
+        wandoujia {
+            dimension "default"
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: PREFIX + "android_wandoujia"]
+        }
+    }
+
+    signingConfigs {
+        debug {
+        }
+
+        release {
+            storeFile
+            storePassword
+            keyAlias
+            keyPassword
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+
+            // develop
+            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com"')
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            // release
+            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com"')
+
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "${PREFIX}V${defaultConfig.versionName}_${variant.productFlavors[0].name}_${releaseTime()}.apk"
+                }
+            }
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+File propFile = file('signing.properties')
+if (propFile.exists()) {
+    Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+    if (props.containsKey('STORE_FILE')
+            && props.containsKey('STORE_PASSWORD')
+            && props.containsKey('KEY_ALIAS')
+            && props.containsKey('KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    }
+}
+
+static def releaseTime() {
+    return new Date().format("yyyyMMdd")
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation project(':mvp')
+}

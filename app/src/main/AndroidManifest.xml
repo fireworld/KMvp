@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cc.colorcat.client">
+
+    <application
+        android:name=".Client"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
+
+        <!--友盟 key Key, 需从友盟官方申请，其赋值位于如下位置：-->
+        <!--build.gradle(Module: app)/android/defaultConfig/manifestPlaceholders = [UMENG_APPKEY_VALUE: "0123456789101112131415"]-->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="${UMENG_APPKEY_VALUE}" />
+
+        <!--多渠道打包，友盟统计渠道标签，可自定义，注意事项如下：-->
+        <!--1. 可以由英文字母、阿拉伯数字、下划线、中划线、空格、括号组成，可以含汉字以及其他明文字符，但是不建议使用中文命名，会出现乱码。-->
+        <!--2. 首尾字符不可以为空格-->
+        <!--3. 不要使用纯数字作为渠道ID-->
+        <!--4. 最多256个字符-->
+        <!--5. "unknown" 及其各种大小写形式，作为友盟保留的字段，不可以作为渠道名-->
+        <!--其赋值位于：build.gradle(Module: app)/android/productFlavors-->
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
+    </application>
+</manifest>
