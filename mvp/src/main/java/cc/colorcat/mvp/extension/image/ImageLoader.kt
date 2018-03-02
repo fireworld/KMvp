@@ -62,7 +62,7 @@ class ImageLoader private constructor(private val creator: Task.Creator) {
         }
 
         @JvmStatic
-        fun createUri(@DrawableRes resId: Int): Uri = Uri.parse("vangogh://resource?id=" + resId)
+        fun createUri(@DrawableRes resId: Int): Uri = Uri.parse("vangogh://resource?id=$resId")
 
         @JvmStatic
         fun load(url: String?) = ImageLoader(VanGogh.get().load(url))
