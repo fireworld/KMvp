@@ -41,10 +41,10 @@ abstract class BaseImpl<T> : Base<T> {
 
     protected abstract fun builder(): MRequest.Builder<T>
 
-    @Suppress("UNCHECKED_CAST")
     protected fun create(): MRequest.Builder<T> {
         val pt = this::class.java.genericSuperclass as ParameterizedType
         val token = TypeToken.getParameterized(Result::class.java, *pt.actualTypeArguments)
+        @Suppress("UNCHECKED_CAST")
         return MRequest.Builder(ResultParser.create(token as TypeToken<Result<T>>))
     }
 
