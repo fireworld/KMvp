@@ -35,14 +35,14 @@ dependencies {
     implementation rootProject.ext.kotlinSupport
     implementation rootProject.ext.supportAppcompat
     implementation rootProject.ext.supportDesign
-    implementation rootProject.ext.supportConstraintLayout
     implementation rootProject.ext.supportV4
-//    implementation rootProject.ext.umengAnalytics
-    implementation rootProject.ext.gson
     implementation rootProject.ext.supportCardView
-//    implementation rootProject.ext.ucrop
-//    implementation rootProject.ext.richEditor
-    testImplementation rootProject.ext.junit
+    implementation rootProject.ext.supportConstraintLayout
     androidTestImplementation rootProject.ext.testRunner
     androidTestImplementation rootProject.ext.testEspresso
+    testImplementation rootProject.ext.junit
+    implementation rootProject.ext.gson
+//    implementation rootProject.ext.ucrop
+//    implementation rootProject.ext.richEditor
+//    implementation rootProject.ext.umengAnalytics
 }

@@ -49,11 +49,11 @@ project.ext {
     supportV4 = "com.android.support:support-v4:${supportVersion}"
     supportCardView = "com.android.support:cardview-v7:${supportVersion}"
     supportConstraintLayout = "com.android.support.constraint:constraint-layout:1.0.2"
-//    umengAnalytics = 'com.umeng.analytics:analytics:latest.integration'
-    gson = 'com.google.code.gson:gson:2.8.1'
-//    richEditor = 'jp.wasabeef:richeditor-android:1.2.2'
-//    ucrop = 'com.github.yalantis:ucrop:2.2.1'
     testRunner = "com.android.support.test:runner:1.0.1"
     testEspresso = 'com.android.support.test.espresso:espresso-core:3.0.1'
     junit = 'junit:junit:4.12'
+    gson = 'com.google.code.gson:gson:2.8.1'
+//    umengAnalytics = 'com.umeng.analytics:analytics:latest.integration'
+//    richEditor = 'jp.wasabeef:richeditor-android:1.2.2'
+//    ucrop = 'com.github.yalantis:ucrop:2.2.1'
 }
