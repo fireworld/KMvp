@@ -7,9 +7,8 @@ import android.view.MenuItem
 import cc.colorcat.mvp.R
 import cc.colorcat.mvp.contract.ICourses
 import cc.colorcat.mvp.entity.Course
-import cc.colorcat.mvp.extension.image.CircleTransformer
+import cc.colorcat.mvp.extension.image.CornerTransformer
 import cc.colorcat.mvp.extension.image.ImageLoader
-import cc.colorcat.mvp.extension.image.SquareTransformer
 import cc.colorcat.mvp.extension.widget.*
 import cc.colorcat.mvp.presenter.CoursesPresenter
 import kotlinx.android.synthetic.main.activity_courses.*
@@ -23,8 +22,8 @@ class CoursesActivity : BaseActivity(), ICourses.View, KTip.Listener {
     private val mCourses = mutableListOf<Course>()
     private val mAdapter: ChoiceRvAdapter by lazy {
         object : AutoChoiceRvAdapter() {
-            val square = SquareTransformer()
-            val circle = CircleTransformer()
+            val tlBr = CornerTransformer.create(CornerTransformer.TYPE_TL or CornerTransformer.TYPE_BR)
+            val trBl = CornerTransformer.create(CornerTransformer.TYPE_TR or CornerTransformer.TYPE_BL)
 
             override fun getLayoutResId(viewType: Int): Int = R.layout.item_course
 
@@ -32,7 +31,7 @@ class CoursesActivity : BaseActivity(), ICourses.View, KTip.Listener {
                 val course = mCourses[position]
                 val helper = holder.helper
                 ImageLoader.load(course.picBigUrl)
-                        .addTransformer(if (position and 1 == 0) circle else square)
+                        .addTransformer(if (position and 1 == 0) trBl else tlBr)
                         .into(helper.getView(R.id.iv_icon))
                 helper.setText(R.id.tv_serial_number, position.toString())
                         .setText(R.id.tv_name, course.name)
