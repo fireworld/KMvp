@@ -1,13 +1,14 @@
 package cc.colorcat.mvp.view
 
+import android.graphics.Color
+import android.util.TypedValue
 import cc.colorcat.mvp.R
 import cc.colorcat.mvp.api.GetCourses
 import cc.colorcat.mvp.api.GetCoursesImpl
 import cc.colorcat.mvp.contract.IList
 import cc.colorcat.mvp.entity.Course
-import cc.colorcat.mvp.extension.image.CircleTransformer
+import cc.colorcat.mvp.extension.image.CornerTransformer
 import cc.colorcat.mvp.extension.image.ImageLoader
-import cc.colorcat.mvp.extension.image.SquareTransformer
 import cc.colorcat.mvp.extension.net.WeakListener
 import cc.colorcat.mvp.extension.widget.RvAdapter
 import cc.colorcat.mvp.extension.widget.RvHolder
@@ -46,13 +47,14 @@ class CourseListFragment : ListFragment<Course>() {
 
     override fun createAdapter(items: List<Course>): RvAdapter {
         return object : SimpleAutoChoiceRvAdapter<Course>(items, R.layout.item_course) {
-            val square = SquareTransformer()
-            val circle = CircleTransformer()
+            private val borderWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4F, resources.displayMetrics)
+            private val tlBr = CornerTransformer.create(CornerTransformer.TYPE_TL or CornerTransformer.TYPE_BR, borderWidth, Color.RED)
+            private val trBl = CornerTransformer.create(CornerTransformer.TYPE_TR or CornerTransformer.TYPE_BL, borderWidth, Color.BLUE)
             override fun bindView(holder: RvHolder, data: Course) {
                 val helper = holder.helper
                 val position = helper.position
                 ImageLoader.load(data.picBigUrl)
-                        .addTransformer(if (position and 1 == 0) circle else square)
+                        .addTransformer(if (position and 1 == 0) tlBr else trBl)
                         .into(helper.getView(R.id.iv_icon))
                 helper.setText(R.id.tv_serial_number, position.toString())
                         .setText(R.id.tv_name, data.name)

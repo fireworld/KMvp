@@ -1,7 +1,9 @@
 package cc.colorcat.mvp.view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import cc.colorcat.mvp.R
@@ -22,8 +24,9 @@ class CoursesActivity : BaseActivity(), ICourses.View, KTip.Listener {
     private val mCourses = mutableListOf<Course>()
     private val mAdapter: ChoiceRvAdapter by lazy {
         object : AutoChoiceRvAdapter() {
-            val tlBr = CornerTransformer.create(CornerTransformer.TYPE_TL or CornerTransformer.TYPE_BR)
-            val trBl = CornerTransformer.create(CornerTransformer.TYPE_TR or CornerTransformer.TYPE_BL)
+            private val borderWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4F, resources.displayMetrics)
+            private val tlBr = CornerTransformer.create(CornerTransformer.TYPE_TL or CornerTransformer.TYPE_BR, borderWidth, Color.RED)
+            private val trBl = CornerTransformer.create(CornerTransformer.TYPE_TR or CornerTransformer.TYPE_BL, borderWidth, Color.BLUE)
 
             override fun getLayoutResId(viewType: Int): Int = R.layout.item_course
 

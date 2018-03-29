@@ -1,5 +1,6 @@
 <resources>
-    <string name="show_course_list">Show Course List</string>
+    <string name="show_course_list">show course list</string>
+    <string name="show_course_list_with_fragment">show course list with fragment</string>
     <string name="thumbnail">thumbnail</string>
     <string name="connect_error">connect error</string>
     <string name="single_mode">Single Mode</string>
@@ -7,7 +8,7 @@
     <string name="none">None</string>
     <string name="select_first">Select First</string>
     <string name="move">move</string>
-    <string name="request_permission">Request Permission</string>
+    <string name="request_permission">request permission</string>
     <string name="tip_network_error">network error</string>
     <string name="tip_click_to_retry">click to retry</string>
 </resources>
