@@ -10,7 +10,6 @@
     <application android:theme="@style/AppTheme">
         <activity
             android:name=".view.LaunchActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

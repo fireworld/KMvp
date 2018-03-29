@@ -13,10 +13,10 @@
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_show_courses_with_fragment"
+        android:id="@+id/btn_show_courses_by_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/show_course_list_with_fragment"
+        android:text="@string/show_course_list_by_fragment"
         android:textAllCaps="false" />
 
     <Button
