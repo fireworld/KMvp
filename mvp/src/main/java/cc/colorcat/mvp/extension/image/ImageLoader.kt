@@ -75,6 +75,16 @@ class ImageLoader private constructor(private val creator: Task.Creator) {
 
         @JvmStatic
         fun load(uri: Uri?) = ImageLoader(VanGogh.get().load(uri))
+
+        @JvmStatic
+        fun resume() {
+            VanGogh.get().resume()
+        }
+
+        @JvmStatic
+        fun pause() {
+            VanGogh.get().pause()
+        }
     }
 
     fun config(config: Bitmap.Config): ImageLoader {

@@ -1,5 +1,6 @@
 package cc.colorcat.mvp.view
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,35 +19,39 @@ import kotlinx.android.synthetic.main.fragment_list.*
  * xx.ch@outlook.com
  */
 abstract class ListFragment<T> : BaseFragment(), IList.View<T>, KTip.Listener {
-    override val mTip: KTip by lazy { KTip.from(rv_items, R.layout.network_error, this) }
     override val layoutResId: Int = R.layout.fragment_list
+    override val tip: KTip by lazy { KTip.from(rv_items, R.layout.network_error, this) }
+
+    protected open val mItemClickEnabled: Boolean = false
+    protected open val mRefreshable = true
 
     protected abstract val mPresenter: IList.Presenter<T>
-    protected open val mRefreshable = true
     protected val mItems: MutableList<T> = mutableListOf()
     private val mAdapter: RvAdapter by lazy { createAdapter(mItems) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rv_items.layoutManager = LinearLayoutManager(view.context)
+        rv_items.layoutManager = layoutManager(view.context)
         rv_items.adapter = mAdapter
-        rv_items.addOnScrollListener(ImageOnScrollListener.Instance)
+        rv_items.addOnScrollListener(ImageOnScrollListener.get())
         rv_items.addOnScrollListener(object : RvOnLoadMoreScrollListener() {
             override fun onLoadMore() {
                 mItems.lastOrNull()?.also { mPresenter.toGetMoreItems(it) }
             }
         })
-        rv_items.addOnItemTouchListener(object : OnRvItemClickListener() {
-            override fun onItemClick(holder: RecyclerView.ViewHolder) {
-                super.onItemClick(holder)
-                this@ListFragment.toItemDetail(mItems[holder.adapterPosition])
-            }
+        if (mItemClickEnabled) {
+            rv_items.addOnItemTouchListener(object : OnRvItemClickListener() {
+                override fun onItemClick(holder: RecyclerView.ViewHolder) {
+                    super.onItemClick(holder)
+                    this@ListFragment.onItemClick(mItems[holder.adapterPosition])
+                }
 
-            override fun onItemLongClick(holder: RecyclerView.ViewHolder) {
-                super.onItemLongClick(holder)
-                this@ListFragment.onItemLongClick(mItems[holder.adapterPosition])
-            }
-        })
+                override fun onItemLongClick(holder: RecyclerView.ViewHolder) {
+                    super.onItemLongClick(holder)
+                    this@ListFragment.onItemLongClick(mItems[holder.adapterPosition])
+                }
+            })
+        }
         if (mRefreshable) {
             srl_root.isEnabled = true
             srl_root.setOnRefreshListener { mPresenter.toRefreshItems(mItems.firstOrNull()) }
@@ -59,6 +64,10 @@ abstract class ListFragment<T> : BaseFragment(), IList.View<T>, KTip.Listener {
     override fun onDestroyView() {
         mPresenter.onDestroy()
         super.onDestroyView()
+    }
+
+    protected open fun layoutManager(context: Context): RecyclerView.LayoutManager {
+        return LinearLayoutManager(context)
     }
 
     override fun refreshItems(items: List<T>) {
@@ -81,18 +90,17 @@ abstract class ListFragment<T> : BaseFragment(), IList.View<T>, KTip.Listener {
         }
     }
 
-    override fun toItemDetail(item: T) {
-    }
-
     override fun stopRefreshing() {
         srl_root.isRefreshing = false
     }
 
+    protected open fun onItemClick(item: T) {}
+
+    protected open fun onItemLongClick(item: T) {}
+
     override fun onTipClick() {
         mPresenter.toRefreshItems(mItems.firstOrNull())
     }
-
-    protected open fun onItemLongClick(item: T) {}
 
     protected abstract fun createAdapter(items: List<T>): RvAdapter
 }

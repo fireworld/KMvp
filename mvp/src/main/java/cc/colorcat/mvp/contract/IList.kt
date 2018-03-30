@@ -12,8 +12,6 @@ interface IList {
 
         fun removeItem(item: T)
 
-        fun toItemDetail(item: T)
-
         fun stopRefreshing()
     }
 

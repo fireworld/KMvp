@@ -1,9 +1,7 @@
 package cc.colorcat.mvp.extension.image
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.widget.AbsListView
-import cc.colorcat.vangogh.VanGogh
 
 /**
  * Created by cxx on 18-2-7.
@@ -14,7 +12,7 @@ class ImageOnScrollListener private constructor(
 ) : RecyclerView.OnScrollListener(), AbsListView.OnScrollListener {
     companion object {
         @JvmStatic
-        val Instance by lazy { ImageOnScrollListener(null) }
+        fun get() = ImageOnScrollListener(null)
 
         @JvmStatic
         fun newInstance(listener: AbsListView.OnScrollListener) = ImageOnScrollListener(listener)
@@ -23,12 +21,12 @@ class ImageOnScrollListener private constructor(
     // RecyclerView
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         super.onScrollStateChanged(recyclerView, newState)
-        updateVanGoghStatus(recyclerView.context, newState == RecyclerView.SCROLL_STATE_IDLE)
+        updateVanGoghStatus(newState == RecyclerView.SCROLL_STATE_IDLE)
     }
 
     // ListView
     override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
-        updateVanGoghStatus(view.context, scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE)
+        updateVanGoghStatus(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE)
         listener?.onScrollStateChanged(view, scrollState)
     }
 
@@ -36,11 +34,11 @@ class ImageOnScrollListener private constructor(
         listener?.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount)
     }
 
-    private fun updateVanGoghStatus(ctx: Context, idle: Boolean) {
+    private fun updateVanGoghStatus(idle: Boolean) {
         if (idle) {
-            VanGogh.with(ctx).resume()
+            ImageLoader.resume()
         } else {
-            VanGogh.with(ctx).pause()
+            ImageLoader.pause()
         }
     }
 }
