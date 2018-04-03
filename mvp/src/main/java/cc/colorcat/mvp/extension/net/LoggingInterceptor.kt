@@ -8,8 +8,7 @@ import java.nio.charset.Charset
  * Created by cxx on 2018/3/30.
  * xx.ch@outlook.com
  */
-open class LoggingTailInterceptor(private val charsetIfAbsent: Charset) : Interceptor {
-    constructor() : this(Charset.forName("UTF-8"))
+open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -17,16 +16,31 @@ open class LoggingTailInterceptor(private val charsetIfAbsent: Charset) : Interc
         var response = chain.proceed(request)
 
         synchronized(TAG) {
-            log(HALF_LINE + request.method().name + HALF_LINE, Level.DEBUG)
-            log("request url = " + request.url(), Level.DEBUG)
-            logPair("request header", request.headers(), Level.DEBUG)
-            if (request.method().needBody()) {
-                logPair("request parameter", request.parameters(), Level.DEBUG)
-                logFile(request.fileBodies(), Level.DEBUG)
-            }
+            val log = StringBuilder()
+                    .append(" ").append('\n').append(HALF_LINE).append(request.method().name).append(HALF_LINE)
+                    .append('\n').append("request url --> ").append(request.url())
+                    .append(logPair("request header", request.headers(), Level.DEBUG))
 
-            log("response --> " + response.responseCode() + "--" + response.responseMsg(), Level.INFO)
-            logPair("response header", response.headers(), Level.INFO)
+
+//            log(HALF_LINE + request.method().name + HALF_LINE, Level.DEBUG)
+//            log("request url = " + request.url(), Level.DEBUG)
+//            logPair("request header", request.headers(), Level.DEBUG)
+            if (request.method().needBody()) {
+                log.append(logPair("request parameter", request.parameters(), Level.DEBUG))
+                        .append(logFile(request.fileBodies(), Level.DEBUG))
+
+//                logPair("request parameter", request.parameters(), Level.DEBUG)
+//                logFile(request.fileBodies(), Level.DEBUG)
+            }
+//            log(requestLog.toString(), Level.DEBUG)
+
+            val responseLog = StringBuilder()
+            log.append("response --> ").append(response.responseCode()).append("--").append(response.responseMsg())
+                    .append(logPair("response header", response.headers(), Level.INFO))
+//            log(responseLog.toString(), Level.INFO)
+
+//            log("response --> " + response.responseCode() + "--" + response.responseMsg(), Level.INFO)
+//            logPair("response header", response.headers(), Level.INFO)
             val body = response.responseBody()
             if (body != null) {
                 val contentType = body.contentType()
@@ -35,7 +49,8 @@ open class LoggingTailInterceptor(private val charsetIfAbsent: Charset) : Interc
                     var charset: Charset? = body.charset()
                     if (charset == null) charset = charsetIfAbsent
                     val content = String(bytes, charset)
-                    log("response content --> $content", Level.INFO)
+//                    log("response content --> $content", Level.WARN)
+                    log.append('\n').append("response content --> ").append(content)
                     val newBody = ResponseBody.create(bytes, contentType, charset)
                     response = response.newBuilder()
                             .setHeader(Headers.CONTENT_LENGTH, java.lang.Long.toString(newBody.contentLength()))
@@ -43,7 +58,10 @@ open class LoggingTailInterceptor(private val charsetIfAbsent: Charset) : Interc
                             .build()
                 }
             }
-            log(LINE, Level.INFO)
+            log.append('\n').append(LINE)
+            log(log.toString(), Level.INFO)
+//            log(responseLog.toString(), Level.INFO)
+//            log(LINE, Level.INFO)
             return response
         }
     }
@@ -57,17 +75,23 @@ open class LoggingTailInterceptor(private val charsetIfAbsent: Charset) : Interc
         private val LINE = buildString(80, '-')
         private val HALF_LINE = buildString(38, '-')
 
-        private fun logPair(type: String, reader: PairReader, level: Level) {
+        private fun logPair(type: String, reader: PairReader, level: Level): String {
+            val log = StringBuilder()
             for (nv in reader) {
-                val msg = type + " --> " + nv.name + " = " + nv.value
-                log(msg, level)
+                log.append('\n').append(type).append(" --> ").append(nv.name).append(" = ").append(nv.value)
+//                val msg = type + " --> " + nv.name + " = " + nv.value
+//                log(msg, level)
             }
+            return log.toString()
         }
 
-        private fun logFile(fileBodies: List<FileBody>, level: Level) {
+        private fun logFile(fileBodies: List<FileBody>, level: Level): String {
+            val log = StringBuilder()
             for (body in fileBodies) {
-                log("request file --> $body", level)
+                log.append('\n').append("request file --> ").append(body.toString())
+//                log("request file --> $body", level)
             }
+            return log.toString()
         }
 
         private fun log(msg: String, level: Level) {
