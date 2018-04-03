@@ -10,7 +10,7 @@ import java.nio.charset.Charset
  * Created by cxx on 2018/4/3.
  * xx.ch@outlook.com
  */
-open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
+class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -87,6 +87,23 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
                 builder.append(c)
             }
             return builder.toString()
+        }
+
+        @JvmStatic
+        private fun decode(unicode: String): String {
+            val result = StringBuilder(unicode)
+            val hexRegex = "[0-9a-zA-Z]{4}".toRegex()
+            var index = result.indexOf("\\u")
+            var hex: String
+            while (index >= 0 && index + 6 <= result.length) {
+                hex = result.substring(index + 2, index + 6)
+                if (hex.matches(hexRegex)) {
+                    val string = Integer.parseInt(hex, 16).toChar().toString()
+                    result.replace(index, index + 6, string)
+                }
+                index = result.indexOf("\\u", index + 1)
+            }
+            return result.toString()
         }
     }
 }
