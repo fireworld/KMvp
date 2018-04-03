@@ -10,7 +10,7 @@ import java.nio.charset.Charset
  * Created by cxx on 2018/4/3.
  * xx.ch@outlook.com
  */
-class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
+open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
