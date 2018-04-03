@@ -23,7 +23,8 @@ object ApiService {
                 .enableGzip(true)
                 .logLevel(if (client.debug) Level.VERBOSE else Level.NOTHING)
         if (client.debug) {
-            builder.addTailInterceptor(LoggingTailInterceptor())
+//            builder.addTailInterceptor(LoggingTailInterceptor())
+            builder.addTailInterceptor(LoggingInterceptor())
         }
         netBird = builder.build()
     }

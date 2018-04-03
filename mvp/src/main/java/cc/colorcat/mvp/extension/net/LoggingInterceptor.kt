@@ -5,7 +5,9 @@ import java.io.IOException
 import java.nio.charset.Charset
 
 /**
- * Created by cxx on 2018/3/30.
+ * for android studio 3.1
+ *
+ * Created by cxx on 2018/4/3.
  * xx.ch@outlook.com
  */
 open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.forName("UTF-8")) : Interceptor {
@@ -16,52 +18,36 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
         var response = chain.proceed(request)
 
         synchronized(TAG) {
-            val log = StringBuilder()
-                    .append(" ").append('\n').append(HALF_LINE).append(request.method().name).append(HALF_LINE)
-                    .append('\n').append("request url --> ").append(request.url())
-                    .append(logPair("request header", request.headers(), Level.DEBUG))
+            val logBuilder = StringBuilder()
 
+            logBuilder.append(" \n").append(HALF_LINE).append(request.method().name).append(HALF_LINE)
+                    .append("\nrequest url --> ").append(request.url())
+            appendPair(logBuilder, "request header --> ", request.headers())
 
-//            log(HALF_LINE + request.method().name + HALF_LINE, Level.DEBUG)
-//            log("request url = " + request.url(), Level.DEBUG)
-//            logPair("request header", request.headers(), Level.DEBUG)
             if (request.method().needBody()) {
-                log.append(logPair("request parameter", request.parameters(), Level.DEBUG))
-                        .append(logFile(request.fileBodies(), Level.DEBUG))
-
-//                logPair("request parameter", request.parameters(), Level.DEBUG)
-//                logFile(request.fileBodies(), Level.DEBUG)
+                appendPair(logBuilder, "request parameter --> ", request.parameters())
+                appendFile(logBuilder, "request file --> ", request.fileBodies())
             }
-//            log(requestLog.toString(), Level.DEBUG)
 
-            val responseLog = StringBuilder()
-            log.append("response --> ").append(response.responseCode()).append("--").append(response.responseMsg())
-                    .append(logPair("response header", response.headers(), Level.INFO))
-//            log(responseLog.toString(), Level.INFO)
-
-//            log("response --> " + response.responseCode() + "--" + response.responseMsg(), Level.INFO)
-//            logPair("response header", response.headers(), Level.INFO)
+            logBuilder.append("\n\nresponse --> ").append(response.responseCode()).append("--").append(response.responseMsg())
+            appendPair(logBuilder, "response header --> ", response.headers())
             val body = response.responseBody()
             if (body != null) {
                 val contentType = body.contentType()
                 if (contentType != null && contentFilter(contentType)) {
                     val bytes = body.bytes()
-                    var charset: Charset? = body.charset()
-                    if (charset == null) charset = charsetIfAbsent
+                    val charset: Charset = body.charset() ?: charsetIfAbsent
                     val content = String(bytes, charset)
-//                    log("response content --> $content", Level.WARN)
-                    log.append('\n').append("response content --> ").append(content)
+                    logBuilder.append("\nresponse content --> ").append(content)
                     val newBody = ResponseBody.create(bytes, contentType, charset)
                     response = response.newBuilder()
-                            .setHeader(Headers.CONTENT_LENGTH, java.lang.Long.toString(newBody.contentLength()))
+                            .setHeader(Headers.CONTENT_LENGTH, newBody.contentLength().toString())
                             .responseBody(newBody)
                             .build()
                 }
             }
-            log.append('\n').append(LINE)
-            log(log.toString(), Level.INFO)
-//            log(responseLog.toString(), Level.INFO)
-//            log(LINE, Level.INFO)
+            logBuilder.append('\n').append(LINE)
+            log(logBuilder.toString(), Level.INFO)
             return response
         }
     }
@@ -72,32 +58,29 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
 
     companion object {
         private val TAG = NetBird::class.java.simpleName
-        private val LINE = buildString(80, '-')
-        private val HALF_LINE = buildString(38, '-')
+        private val LINE = buildString(80, '=')
+        private val HALF_LINE = buildString(38, '=')
 
-        private fun logPair(type: String, reader: PairReader, level: Level): String {
-            val log = StringBuilder()
+        @JvmStatic
+        private fun appendPair(builder: StringBuilder, prefix: String, reader: PairReader) {
             for (nv in reader) {
-                log.append('\n').append(type).append(" --> ").append(nv.name).append(" = ").append(nv.value)
-//                val msg = type + " --> " + nv.name + " = " + nv.value
-//                log(msg, level)
+                builder.append('\n').append(prefix).append(nv.name).append(" = ").append(nv.value)
             }
-            return log.toString()
         }
 
-        private fun logFile(fileBodies: List<FileBody>, level: Level): String {
-            val log = StringBuilder()
+        @JvmStatic
+        private fun appendFile(builder: StringBuilder, prefix: String, fileBodies: List<FileBody>) {
             for (body in fileBodies) {
-                log.append('\n').append("request file --> ").append(body.toString())
-//                log("request file --> $body", level)
+                builder.append('\n').append(prefix).append(body.toString())
             }
-            return log.toString()
         }
 
+        @JvmStatic
         private fun log(msg: String, level: Level) {
             Platform.get().logger().log(TAG, msg, level)
         }
 
+        @JvmStatic
         private fun buildString(count: Int, c: Char): String {
             val builder = StringBuilder()
             for (i in 0 until count) {
