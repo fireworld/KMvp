@@ -92,7 +92,7 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
         @JvmStatic
         private fun decode(unicode: String): String {
             val result = StringBuilder(unicode)
-            val hexRegex = "[0-9a-zA-Z]{4}".toRegex()
+            val hexRegex = "[0-9a-fA-F]{4}".toRegex()
             var index = result.indexOf("\\u")
             var hex: String
             while (index >= 0 && index + 6 <= result.length) {
