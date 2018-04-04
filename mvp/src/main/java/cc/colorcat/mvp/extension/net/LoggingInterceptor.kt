@@ -3,6 +3,7 @@ package cc.colorcat.mvp.extension.net
 import cc.colorcat.netbird4.*
 import java.io.IOException
 import java.nio.charset.Charset
+import java.util.regex.Pattern
 
 /**
  * for android studio 3.1
@@ -38,7 +39,7 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
                     val bytes = body.bytes()
                     val charset: Charset = body.charset() ?: charsetIfAbsent
                     val content = String(bytes, charset)
-                    logBuilder.append("\nresponse content --> ").append(content)
+                    logBuilder.append("\nresponse content --> ").append(decode(content))
                     val newBody = ResponseBody.create(bytes, contentType, charset)
                     response = response.newBuilder()
                             .setHeader(Headers.CONTENT_LENGTH, newBody.contentLength().toString())
@@ -91,19 +92,19 @@ open class LoggingInterceptor(private val charsetIfAbsent: Charset = Charset.for
 
         @JvmStatic
         private fun decode(unicode: String): String {
-            val result = StringBuilder(unicode)
-            val hexRegex = "[0-9a-fA-F]{4}".toRegex()
-            var index = result.indexOf("\\u")
-            var hex: String
-            while (index >= 0 && index + 6 <= result.length) {
-                hex = result.substring(index + 2, index + 6)
-                if (hex.matches(hexRegex)) {
-                    val string = Integer.parseInt(hex, 16).toChar().toString()
-                    result.replace(index, index + 6, string)
-                }
-                index = result.indexOf("\\u", index + 1)
+            val result = StringBuilder(unicode.length)
+            val matcher = Pattern.compile("\\\\u[0-9a-fA-F]{4}").matcher(unicode)
+            var last = 0
+            var start: Int
+            var end = 0
+            while (matcher.find(end)) {
+                start = matcher.start()
+                end = matcher.end()
+                result.append(unicode.substring(last, start))
+                        .append(Integer.parseInt(unicode.substring(start + 2, end), 16).toChar())
+                last = end
             }
-            return result.toString()
+            return result.append(unicode.substring(last)).toString()
         }
     }
 }
