@@ -15,7 +15,7 @@ import cc.colorcat.mvp.extension.bundleOf
  */
 interface ViewNavigator {
     companion object {
-        const val EXTRAS = "cc.colorcat.kmvp.view.ViewNavigator"
+        const val EXTRAS = "cc.colorcat.mvp.view.ViewNavigator"
     }
 
     var extras: Bundle?
