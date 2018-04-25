@@ -16,6 +16,8 @@ interface Base<T> {
 
     fun send(create: () -> MListener<T>?): Any
 
+    fun onSuccess(callback: (T) -> Unit): Any
+
     fun cancel()
 }
 

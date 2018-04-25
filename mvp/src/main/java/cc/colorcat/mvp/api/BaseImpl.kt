@@ -4,6 +4,7 @@ import cc.colorcat.kmvp.entity.Result
 import cc.colorcat.mvp.extension.net.ApiService
 import cc.colorcat.mvp.extension.net.MListener
 import cc.colorcat.mvp.extension.net.ResultParser
+import cc.colorcat.mvp.extension.net.SimpleListener
 import cc.colorcat.netbird4.MRequest
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
@@ -31,6 +32,14 @@ abstract class BaseImpl<T> : Base<T> {
 
     override fun send(create: () -> MListener<T>?): Any {
         return send(create())
+    }
+
+    override fun onSuccess(callback: (T) -> Unit): Any {
+        return send(object : SimpleListener<T>() {
+            override fun onSuccess(result: T) {
+                callback(result)
+            }
+        })
     }
 
     override fun cancel() {
