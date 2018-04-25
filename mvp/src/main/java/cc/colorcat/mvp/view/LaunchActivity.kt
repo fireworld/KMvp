@@ -28,7 +28,7 @@ class LaunchActivity : BaseActivity() {
                 navigateTo(CoursesActivity::class.java)
             }
             R.id.btn_show_courses_by_fragment -> {
-                startActivity(newIntent(this@LaunchActivity, ContainerActivity::class.java, Const.key.container_layout to R.layout.activity_container_courses))
+                navigateTo(ContainerActivity::class.java, Const.key.fragment_name to CourseListFragment::class.java.name)
             }
             R.id.btn_request_permission -> {
                 requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), object : PermissionListener {

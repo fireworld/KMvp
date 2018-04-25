@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,9 @@ abstract class BaseFragment : Fragment(), IBase.View {
     private companion object {
         const val CODE_REQUEST_PERMISSION = 0X2319
     }
+
+    protected val childManager: FragmentManager
+        get() = childFragmentManager
 
     private var mPermissionListener: PermissionListener? = null
     private var mActive = false
@@ -124,9 +128,13 @@ abstract class BaseFragment : Fragment(), IBase.View {
         activity?.finish()
     }
 
-    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false) {
+    protected fun navigateTo(clazz: Class<out BaseActivity>, vararg pairs: Pair<String, Any>) {
+        navigateTo(clazz, false, *pairs)
+    }
+
+    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false, vararg pairs: Pair<String, Any>) {
         activity?.also {
-            it.startActivity(newIntent(it, clazz))
+            it.startActivity(newIntent(it, clazz, *pairs))
             if (finish) it.finish()
         }
     }

@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import cc.colorcat.mvp.R
@@ -20,6 +21,9 @@ abstract class BaseActivity : AppCompatActivity(), IBase.View {
     private companion object {
         const val CODE_REQUEST_PERMISSION = 0x7812
     }
+
+    protected val manager: FragmentManager
+        get() = supportFragmentManager
 
     private var mPermissionListener: PermissionListener? = null
     final override var extras: Bundle? = null
@@ -89,8 +93,12 @@ abstract class BaseActivity : AppCompatActivity(), IBase.View {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
-    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false) {
-        startActivity(newIntent(this, clazz))
+    protected fun navigateTo(clazz: Class<out BaseActivity>, vararg pairs: Pair<String, Any>) {
+        navigateTo(clazz, false, *pairs)
+    }
+
+    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false, vararg pairs: Pair<String, Any>) {
+        startActivity(newIntent(this, clazz, *pairs))
         if (finish) finish()
     }
 }

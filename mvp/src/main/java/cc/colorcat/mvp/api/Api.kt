@@ -23,7 +23,7 @@ interface Base<T> {
 
 interface GetCourses : Base<List<Course>> {
     companion object {
-        const val PATH = "/api/teacher"
+        const val PATH = "api/teacher"
     }
 
     fun setType(type: Int): GetCourses

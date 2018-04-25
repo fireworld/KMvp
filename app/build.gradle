@@ -68,7 +68,7 @@ android {
             signingConfig signingConfigs.release
 
             // develop
-            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com"')
+            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com/"')
         }
 
         release {
@@ -77,7 +77,7 @@ android {
             signingConfig signingConfigs.release
 
             // release
-            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com"')
+            buildConfigField('String', 'BASE_URL', '"http://www.imooc.com/"')
 
             android.applicationVariants.all { variant ->
                 variant.outputs.all {

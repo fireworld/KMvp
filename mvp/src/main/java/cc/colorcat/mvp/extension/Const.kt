@@ -11,7 +11,7 @@ class Const private constructor() {
 
     class key private constructor() {
         companion object {
-            const val container_layout = "container_layout"
+            const val fragment_name = "fragment_name"
         }
     }
 
