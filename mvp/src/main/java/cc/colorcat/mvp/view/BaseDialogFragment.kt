@@ -124,9 +124,13 @@ abstract class BaseDialogFragment : DialogFragment(), IBase.View {
         activity?.finish()
     }
 
-    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false) {
+    protected fun navigateTo(clazz: Class<out BaseActivity>, vararg pairs: Pair<String, Any>) {
+        navigateTo(clazz, false, *pairs)
+    }
+
+    protected fun navigateTo(clazz: Class<out BaseActivity>, finish: Boolean = false, vararg pairs: Pair<String, Any>) {
         activity?.also {
-            it.startActivity(newIntent(it, clazz))
+            it.startActivity(newIntent(it, clazz, *pairs))
             if (finish) it.finish()
         }
     }
