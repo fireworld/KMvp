@@ -52,7 +52,7 @@ project.ext {
     testRunner = "com.android.support.test:runner:1.0.1"
     testEspresso = 'com.android.support.test.espresso:espresso-core:3.0.1'
     junit = 'junit:junit:4.12'
-    gson = 'com.google.code.gson:gson:2.8.1'
+    gson = 'com.google.code.gson:gson:2.8.4'
 //    umengAnalytics = 'com.umeng.analytics:analytics:latest.integration'
 //    richEditor = 'jp.wasabeef:richeditor-android:1.2.2'
 //    ucrop = 'com.github.yalantis:ucrop:2.2.1'

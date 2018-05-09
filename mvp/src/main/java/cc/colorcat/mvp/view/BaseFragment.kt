@@ -29,7 +29,7 @@ abstract class BaseFragment : Fragment(), IBase.View {
 
     private var mPermissionListener: PermissionListener? = null
     private var mActive = false
-    final override var extras: Bundle? = null
+    final override var extra: Bundle? = null
     @LayoutRes
     protected open val layoutResId: Int = -1
 

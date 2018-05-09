@@ -15,40 +15,44 @@ import cc.colorcat.mvp.extension.bundleOf
  */
 interface ViewNavigator {
     companion object {
-        const val EXTRAS = "cc.colorcat.mvp.view.ViewNavigator"
+        const val EXTRA = "cc.colorcat.mvp.view.ViewNavigator"
     }
 
-    var extras: Bundle?
+    var extra: Bundle?
 
     fun <T : BaseFragment> newFragment(clazz: Class<T>, vararg pairs: Pair<String, Any>): T {
+        return if (pairs.isEmpty()) clazz.newInstance() else newFragment(clazz, bundleOf(*pairs))
+    }
+
+    fun <T : BaseFragment> newFragment(clazz: Class<T>, extra: Bundle): T {
         val fragment = clazz.newInstance()
-        if (!pairs.isEmpty()) {
-            val args = Bundle(1)
-            args.putBundle(ViewNavigator.EXTRAS, bundleOf(*pairs))
-            fragment.arguments = args
-        }
+        val args = Bundle(1)
+        args.putBundle(ViewNavigator.EXTRA, extra)
+        fragment.arguments = args
         return fragment
     }
 
     fun <T : BaseActivity> newIntent(context: Context, clazz: Class<T>, vararg pairs: Pair<String, Any>): Intent {
+        return if (pairs.isEmpty()) Intent(context, clazz) else newIntent(context, clazz, bundleOf(*pairs))
+    }
+
+    fun <T : BaseActivity> newIntent(context: Context, clazz: Class<T>, extra: Bundle): Intent {
         val intent = Intent(context, clazz)
-        if (!pairs.isEmpty()) {
-            intent.putExtra(ViewNavigator.EXTRAS, bundleOf(*pairs))
-        }
+        intent.putExtra(ViewNavigator.EXTRA, extra)
         return intent
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getExtra(key: String): T? = extras?.get(key) as T?
+    fun <T> getExtra(key: String): T? = extra?.get(key) as T?
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getExtra(key: String, defaultValue: T): T = extras?.get(key) as? T ?: defaultValue
+    fun <T> getExtra(key: String, defaultValue: T): T = extra?.get(key) as? T ?: defaultValue
 
     fun handleExtra(state: Bundle?, save: Boolean) {
         if (save) {
-            extras?.also { state?.putBundle(ViewNavigator.EXTRAS, it) }
-        } else if (extras == null) {
-            extras = state?.getBundle(ViewNavigator.EXTRAS)
+            extra?.also { state?.putBundle(ViewNavigator.EXTRA, it) }
+        } else if (extra == null) {
+            extra = state?.getBundle(ViewNavigator.EXTRA)
         }
     }
 }

@@ -26,7 +26,7 @@ abstract class BaseActivity : AppCompatActivity(), IBase.View {
         get() = supportFragmentManager
 
     private var mPermissionListener: PermissionListener? = null
-    final override var extras: Bundle? = null
+    final override var extra: Bundle? = null
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
