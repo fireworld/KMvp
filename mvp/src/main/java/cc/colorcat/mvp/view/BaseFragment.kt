@@ -61,10 +61,14 @@ abstract class BaseFragment : Fragment(), IBase.View {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handleExtra(arguments, false)
+    }
+
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
-        handleExtra(savedInstanceState ?: arguments, false)
         if (layoutResId != -1) view = inflater.inflate(layoutResId, container, false)
         return view
     }
@@ -137,5 +141,9 @@ abstract class BaseFragment : Fragment(), IBase.View {
             it.startActivity(newIntent(it, clazz, *pairs))
             if (finish) it.finish()
         }
+    }
+
+    public open fun handleBackPressed(): Boolean {
+        return false
     }
 }

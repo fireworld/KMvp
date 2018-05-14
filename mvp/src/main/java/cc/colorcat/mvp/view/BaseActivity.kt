@@ -31,7 +31,7 @@ abstract class BaseActivity : AppCompatActivity(), IBase.View {
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleExtra(savedInstanceState ?: intent.extras, false)
+        handleExtra(intent.extras, false)
     }
 
     final override fun onSaveInstanceState(outState: Bundle) {
@@ -42,6 +42,16 @@ abstract class BaseActivity : AppCompatActivity(), IBase.View {
     final override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         handleExtra(savedInstanceState, false)
+    }
+
+    override fun onBackPressed() {
+        for (fragment in manager.fragments) {
+            fragment as BaseFragment
+            if (fragment.isActive && fragment.isVisible && fragment.handleBackPressed()) {
+                return
+            }
+        }
+        super.onBackPressed()
     }
 
     protected fun requestPermissions(permissions: Array<String>, listener: PermissionListener?) {
