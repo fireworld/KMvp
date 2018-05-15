@@ -51,8 +51,8 @@ interface ViewNavigator {
     fun handleExtra(state: Bundle?, save: Boolean) {
         if (save) {
             extra?.also { state?.putBundle(ViewNavigator.EXTRA, it) }
-        } else if (extra == null) {
-            extra = state?.getBundle(ViewNavigator.EXTRA)
+        } else {
+            state?.also { extra = it.getBundle(ViewNavigator.EXTRA) }
         }
     }
 }
